@@ -378,14 +378,29 @@ public abstract class BaseNode implements Closeable {
             return batch;
         }
     } // (method)
+
+    /**
+     * FUTURE WORK: a host parameter might control this length i.e. "maxConsoleLineLength"
+     * 500 is probably is safe likely practical limit.
+     */
+    private final static int MAX_CONSOLE_LINELENGTH = 500;
     
     /**
      * Adds to the console logs, dropping if necessary.
      */
     protected void addConsoleLog(DateTime timestamp, ConsoleLogEntry.Console console, String line) {
+        // don't allow excessively long console lines. Prevents accidental memory consumption
+        if (line != null && line.length() > MAX_CONSOLE_LINELENGTH) {
+            int len = line.length();
+            line = line.substring(0, len-4) + "...";
+        }
+
+        // FUTURE WORK: the console activity could be added as a Diagnostics chart to show up the existence
+        //              of excessive console thrashing or memory use.
+
         synchronized(_console) {
             // stamp with current sequence number
-            ConsoleLogEntry entry = new ConsoleLogEntry(_consoleSeqCounter++, timestamp, console, line); 
+            ConsoleLogEntry entry = new ConsoleLogEntry(_consoleSeqCounter++, timestamp, console, line);
             
             _console.add(entry);
             
