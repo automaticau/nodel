@@ -381,9 +381,9 @@ public abstract class BaseNode implements Closeable {
 
     /**
      * FUTURE WORK: a host parameter might control this length i.e. "maxConsoleLineLength"
-     * 500 is probably is safe likely practical limit.
+     * 1000 chars is probably is safe likely practical limit.
      */
-    private final static int MAX_CONSOLE_LINELENGTH = 500;
+    private final static int MAX_CONSOLE_LINELENGTH = 1000;
     
     /**
      * Adds to the console logs, dropping if necessary.
@@ -392,7 +392,7 @@ public abstract class BaseNode implements Closeable {
         // don't allow excessively long console lines. Prevents accidental memory consumption
         if (line != null && line.length() > MAX_CONSOLE_LINELENGTH) {
             int len = line.length();
-            line = line.substring(0, len-4) + "...";
+            line = line.substring(0, MAX_CONSOLE_LINELENGTH-4) + "...";
         }
 
         // FUTURE WORK: the console activity could be added as a Diagnostics chart to show up the existence
