@@ -33,18 +33,22 @@ $.views.helpers({
   idxid: function (idx,id) {
     return !_.isUndefined(idx)? String(idx)+'_'+id : id;
   },
-  sanitize: function(value, maxLength) {
+  sanitize: function(value, maxLength, nostrip) {
     var value = JSON.stringify(value, null, 2);
     if (maxLength && value.length > maxLength) {
       value = value.substring(0, maxLength ) + "...";
     }
-    return value.replace(/[<>&]/g, function (c) {
-        switch (c) {
-            case '<': return '&lt;';
-            case '>': return '&gt;';
-            case '&': return '&amp;';
-        }
-    });
+    if(nostrip){
+      return value;
+    } else {
+      return value.replaceAll(/[<>&]/g, function (c) {
+          switch (c) {
+              case '<': return '&lt;';
+              case '>': return '&gt;';
+              case '&': return '&amp;';
+          }
+      });
+    }
   },
   nicetime: function (value, precise, format) {
     if (precise) return moment(value).format('MM-DD HH:mm:ss.SS');

@@ -764,8 +764,8 @@
                     <span class="logtitle">{^{>rawalias}}</span><span class="logtimestamp"> - {^{>~nicetime(timestamp)}}</span>
                     {^{if ~isset(arg)}}
                       <span class="logarg">
-                        {^{if ~root.hold or ~root.flt}}
-                          {^{:~jsonhighlight(~sanitize(arg, 250))}}
+                        {^{if ~root.hold || ~root.flt}}
+                          {^{:~jsonhighlight(~sanitize(arg, 250, true))}}
                         {{else}}
                           {^{:~sanitize(arg, 250)}}
                         {{/if}}
