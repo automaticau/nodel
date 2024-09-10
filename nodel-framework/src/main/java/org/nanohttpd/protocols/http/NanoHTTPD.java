@@ -890,9 +890,7 @@ public abstract class NanoHTTPD {
                 long endAt = -1;
                 String range = header.getProperty("range");
                 if (range != null) {
-                    if (!noFallback) {
-                        return new Response(Status.INTERNAL_ERROR, MIME_PLAINTEXT, "INTERNAL ERROR: 'range' not supported in this context.");
-                    }
+                    // previously this check if !noFallback and threw an INTERNAL ERROR: 'range' not supported in this context
                     if (range.startsWith("bytes=")) {
                         range = range.substring("bytes=".length());
                         int minus = range.indexOf('-');
