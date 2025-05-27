@@ -259,20 +259,67 @@ public class Nodel {
     public static List<NodeURL> getNodeURLs(String filter) throws IOException {
         List<NodeURL> urls = Nodel.getNodeURLs();
 
-        if (Strings.isNullOrEmpty(filter))
+        if (Strings.isEmpty(filter))
             return urls;
 
-        String lcFilter = filter.toLowerCase();
+        // do as much on stack as possible to avoid memory churn  (it's not unusual for lists to be greater than 2000 in size)
 
-        ArrayList<NodeURL> filteredList = new ArrayList<NodeURL>();
+        List<String> filterParts = splitAndFlatten(filter);
+
+        List<NodeURL> result = new ArrayList<>();
+
         for (NodeURL url : urls) {
-            if (url.node.getOriginalName().toLowerCase().contains(lcFilter))
-                filteredList.add(url);
+            String flattenedNodeName = SimpleName.flatten(url.node.getOriginalName());
+
+            // apply all filter parts, quitting early
+            boolean include = false;
+            for (String filterPart : filterParts) {
+                if (flattenedNodeName.contains(filterPart)) {
+                    include = true;
+                } else {
+                    include = false;
+                    break;
+                }
+            }
+
+            if (include) // all filter parts match
+                result.add(url);
         }
 
-        return filteredList;
+        return result;
     }
-    
+
+    /**
+     * Convenience method to efficiently split a space-delimited filter into 'flattened' parts
+     * i.e. ignores case, punctuation and flattens diacritics e.g. "Café-2 Maker" becomes "cafe2 maker"
+     */
+    private static List<String> splitAndFlatten(String filter) {
+        StringBuilder part = new StringBuilder();
+        int len = filter.length();
+        int readPtr = 0;
+
+        List<String> filterParts = new ArrayList<>();
+
+        while (readPtr < len) {
+            char c = filter.charAt(readPtr);
+            if (c == ' ') {
+                if (part.length() > 0) {
+                    filterParts.add(SimpleName.flatten(part.toString()));
+                    part.setLength(0);
+                }
+            } else {
+                part.append(c);
+            }
+            readPtr++;
+        }
+
+        // anything left?
+        if (part.length() > 0)
+            filterParts.add(SimpleName.flatten(part.toString()));
+
+        return filterParts;
+    }
+
     /**
      * Gets a node's URLs
      */
