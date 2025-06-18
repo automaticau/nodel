@@ -501,6 +501,437 @@ var getNodeDetails = function(){
   return d.promise();
 };
 
+// CodeMirror 
+const xmlSchema = {
+  "!top": ["pages"],
+  "!attrs": {
+    "xmlns:xsi": ["http://www.w3.org/2001/XMLSchema-instance"],
+    "xsi:schemaLocation": null
+  },
+  "pages": {
+    "attrs": {
+      "title": null,
+      "theme": ["default", "inverse", "dark", "light"],
+      "logo": null,
+      "css": null,
+      "js": null,
+      "core": ["true", "false"]
+    },
+    "children": ["header", "page", "pagegroup", "footer"]
+  },
+  "header": {
+    "attrs": {
+      "destination": null
+    },
+    "children": ["nodel", "input", "button", "switch"]
+  },
+  "footer": {
+    "children": ["row"]
+  },
+  "page": {
+    "attrs": {
+      "title": null,
+      "action": null
+    },
+    "children": ["row"]
+  },
+  "pagegroup": {
+    "attrs": {
+      "title": null
+    },
+    "children": ["page"]
+  },
+  "row": {
+    "attrs": {
+      "class": null
+    },
+    "children": ["column", "cell"]
+  },
+  "column": {
+    "attrs": {
+      "lg": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+      "md": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+      "sm": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+      "xs": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+      "push": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],
+      "pull": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],
+      "event": null,
+      "showevent": null,
+      "value": null,
+      "showvalue": null
+    },
+    "children": ["title", "subtitle", "text", "button", "buttongroup", "icon", "image", 
+                 "grid", "switch", "partialswitch", "pills", "select", "dynamicselect", 
+                 "dynamicbuttongroup", "status", "badge", "partialbadge", "signal", 
+                 "link", "panel", "range", "field", "lighting", "qrcode", "meter", 
+                 "gap", "group", "nodel", "row"]
+  },
+  "title": {
+    "attrs": {
+      "size": ["1", "2", "3", "4", "5", "6"],
+      "showevent": null,
+      "showvalue": null,
+      "event": null
+    }
+  },
+  "subtitle": {
+    "attrs": {
+      "size": ["1", "2", "3", "4", "5", "6"],
+      "showevent": null,
+      "showvalue": null,
+      "event": null
+    }
+  },
+  "text": {
+    "attrs": {
+      "showevent": null,
+      "showvalue": null,
+      "event": null
+    },
+    "children": ["icon"]
+  },
+  "button": {
+    "attrs": {
+      "type": ["momentary"],
+      "confirm": ["true", "false"],
+      "confirmtext": null,
+      "confirmtitle": null,
+      "class": null,
+      "class-on": null,
+      "event": null,
+      "action": null,
+      "action-on": null,
+      "action-off": null,
+      "join": null,
+      "showevent": null,
+      "showvalue": null,
+      "arg": null,
+      "arg-on": null,
+      "arg-off": null
+    },
+    "children": ["badge", "partialbadge", "signal", "icon", "text", "image"]
+  },
+  "buttongroup": {
+    "attrs": {
+      "type": ["vertical"],
+      "class": null,
+      "showevent": null,
+      "showvalue": null
+    },
+    "children": ["button", "switch", "partialswitch"]
+  },
+  "icon": {
+    "attrs": {
+      "lib": ["fa"],
+      "style": ["fas", "far", "fab"],
+      "type": null,
+      "size": ["1", "2", "3", "4", "5"]
+    }
+  },
+  "image": {
+    "attrs": {
+      "source": null,
+      "showevent": null,
+      "showvalue": null,
+      "event": null,
+      "height": null,
+      "width": null
+    }
+  },
+  "grid": {
+    "children": ["row"]
+  },
+  "cell": {
+    "children": ["button", "switch", "partialswitch", "icon", "image", "text"]
+  },
+  "switch": {
+    "attrs": {
+      "event": null,
+      "action": null,
+      "join": null,
+      "confirm": ["true", "false"],
+      "confirmtext": null,
+      "confirmtitle": null,
+      "class": null,
+      "class-off": null,
+      "class-on": null,
+      "showevent": null,
+      "showvalue": null,
+      "off": null,
+      "on": null
+    }
+  },
+  "partialswitch": {
+    "attrs": {
+      "event": null,
+      "action": null,
+      "join": null,
+      "confirm": ["true", "false"],
+      "confirmtext": null,
+      "confirmtitle": null,
+      "class": null,
+      "class-off": null,
+      "class-on": null,
+      "showevent": null,
+      "showvalue": null,
+      "off": null,
+      "on": null
+    }
+  },
+  "pills": {
+    "attrs": {
+      "event": null,
+      "action": null,
+      "join": null,
+      "confirm": ["true", "false"],
+      "confirmtext": null,
+      "confirmtitle": null,
+      "showevent": null,
+      "showvalue": null
+    },
+    "children": ["pill"]
+  },
+  "pill": {
+    "attrs": {
+      "value": null,
+      "showevent": null,
+      "showvalue": null
+    },
+    "children": ["badge", "partialbadge", "signal"]
+  },
+  "select": {
+    "attrs": {
+      "event": null,
+      "action": null,
+      "join": null,
+      "confirm": ["true", "false"],
+      "confirmtext": null,
+      "confirmtitle": null,
+      "class": null,
+      "dropup": ["true", "false"],
+      "showevent": null,
+      "showvalue": null
+    },
+    "children": ["item"]
+  },
+  "item": {
+    "attrs": {
+      "value": null,
+      "showevent": null,
+      "showvalue": null
+    }
+  },
+  "dynamicselect": {
+    "attrs": {
+      "data": null,
+      "event": null,
+      "action": null,
+      "join": null,
+      "confirm": ["true", "false"],
+      "confirmtext": null,
+      "confirmtitle": null,
+      "class": null
+    }
+  },
+  "dynamicbuttongroup": {
+    "attrs": {
+      "data": null,
+      "event": null,
+      "action": null,
+      "join": null,
+      "confirm": ["true", "false"],
+      "confirmtext": null,
+      "confirmtitle": null,
+      "showevent": null
+    }
+  },
+  "status": {
+    "attrs": {
+      "event": null,
+      "showevent": null,
+      "showvalue": null,
+      "page": null
+    },
+    "children": ["image", "link", "button", "switch", "partialswitch", "badge", "partialbadge", "signal", "statussleep"]
+  },
+  "statussleep": {
+    "attrs": {
+      "action": null,
+      "showevent": null,
+      "showvalue": null
+    }
+  },
+  "badge": {
+    "attrs": {
+      "event": null,
+      "type": null
+    }
+  },
+  "partialbadge": {
+    "attrs": {
+      "event": null,
+      "off": null,
+      "on": null
+    }
+  },
+  "signal": {
+    "attrs": {
+      "event": null,
+      "range": ["perc"]
+    }
+  },
+  "link": {
+    "attrs": {
+      "node": null,
+      "url": null,
+      "showevent": null,
+      "showvalue": null
+    }
+  },
+  "panel": {
+    "attrs": {
+      "event": null,
+      "height": null,
+      "showevent": null,
+      "showvalue": null,
+      "value": null
+    }
+  },
+  "range": {
+    "attrs": {
+      "type": ["vertical", "mute"],
+      "height": null,
+      "min": null,
+      "max": null,
+      "event": null,
+      "action": null,
+      "join": null,
+      "class-on": null,
+      "showevent": null,
+      "showvalue": null
+    },
+    "children": ["badge", "icon"]
+  },
+  "field": {
+    "attrs": {
+      "event": null
+    }
+  },
+  "lighting": {
+    "attrs": {
+      "event": null,
+      "action": null,
+      "join": null,
+      "options": null
+    }
+  },
+  "qrcode": {
+    "attrs": {
+      "event": null,
+      "text": null,
+      "height": null,
+      "help": null
+    }
+  },
+  "meter": {
+    "attrs": {
+      "event": null,
+      "type": null,
+      "range": ["perc"]
+    }
+  },
+  "gap": {
+    "attrs": {
+      "value": null
+    }
+  },
+  "group": {
+    "attrs": {
+      "showevent": null,
+      "showvalue": null
+    },
+    "children": ["title", "subtitle", "text", "button", "buttongroup", "icon", "image", 
+                 "grid", "switch", "partialswitch", "pills", "select", "dynamicselect", 
+                 "dynamicbuttongroup", "status", "badge", "partialbadge", "signal", 
+                 "link", "panel", "range", "field", "lighting", "qrcode", "meter", 
+                 "gap", "group", "nodel", "row"]
+  },
+  "nodel": {
+    "attrs": {
+      "type": ["description", "actsig", "log", "serverlog", "charts", "console", 
+               "params", "remote", "list", "locals", "diagnostics", "add", 
+               "editor", "toolkit", "hosticon", "edit", "nav"]
+    }
+  },
+  "input": {
+    "attrs": {
+      "type": ["checkbox"],
+      "action": null,
+      "event": null
+    }
+  }
+};
+
+// Custom XML hint function that handles context
+var customXmlHint = function(cm, options) {
+  const hints = CodeMirror.hint.xml(cm, options);  
+  if (!hints) return null;
+  const cur = cm.getCursor();
+  const token = cm.getTokenAt(cur);
+  const inner = CodeMirror.innerMode(cm.getMode(), token.state);
+  if (inner.mode.name === "xml") {
+    // Get the tag stack - might be in different places depending on CodeMirror version
+    let context = inner.state.context;
+    let tagStack = [];
+    // Build tag stack from context chain
+    while (context) {
+      if (context.tagName) {
+        tagStack.unshift(context.tagName);
+      }
+      context = context.prev;
+    }
+    // Check if we're currently typing inside a row element
+    const currentTag = tagStack[tagStack.length - 1];
+    if (currentTag === "row") {
+      // Check if any parent is a grid
+      const insideGrid = tagStack.includes("grid");      
+      if (insideGrid) {
+        // Inside grid > row: remove column
+        hints.list = hints.list.filter(function(item) {return item !== "<column";});
+      } else {
+        // Regular row (not inside grid): remove cell
+        hints.list = hints.list.filter(function(item) {return item !== "<cell";});
+      }
+    }
+  }
+  return hints;
+};
+
+// Helper functions for XML autocomplete
+var completeAfter = function(cm, pred) {
+  if (!pred || pred()) setTimeout(function() {
+    if (!cm.state.completionActive)
+      cm.showHint({completeSingle: false});
+  }, 100);
+  return CodeMirror.Pass;
+}
+
+var completeIfAfterLt = function(cm) {
+  return completeAfter(cm, function() {
+    const cur = cm.getCursor();
+    return cm.getRange(CodeMirror.Pos(cur.line, cur.ch - 1), cur) == "<";
+  });
+}
+
+var completeIfInTag = function(cm) {
+  return completeAfter(cm, function() {
+    var tok = cm.getTokenAt(cm.getCursor());
+    if (tok.type == "string" && (!/['"]/.test(tok.string.charAt(tok.string.length - 1)) || tok.string.length == 1)) return false;
+    var inner = CodeMirror.innerMode(cm.getMode(), tok.state).state;
+    return inner.tagName;
+  });
+}
+
 var initEditor = function(){
   $('.nodel-editor textarea').each(function() {
     var ele = this;
@@ -1635,39 +2066,66 @@ var setEvents = function(){
       $(ele).find('textarea').data('path', path);
       // Relative path : $.get(proto+'//' + host + '/nodes/' + encodeURIComponent(node) + '/REST/files/contents?path=' +encodeURIComponent(path), function (data) {
       $.get('REST/files/contents?path=' +encodeURIComponent(path), function (data) {
+        var mode = 'txt';
         switch(path.split('.').pop()){
-          //'sh'
           case 'js':
           case 'json':
-            editor.setOption("mode", "javascript");
+            mode = "javascript";
             break;
           case 'xml':
           case 'xsl':
           case 'html':
           case 'htm':
-            editor.setOption("mode", "xml");
+            mode = "xml";
             break;
           case 'css':
-            editor.setOption("mode", "css");
+            mode = "css";
             break;
           case 'java':
-            editor.setOption("mode", "clike");
+            mode = "clike";
             break;
           case 'groovy':
-            editor.setOption("mode", "groovy");
+            mode = "groovy";
             break;
           case 'sql':
-            editor.setOption("mode", "sql");
+            mode = "sql";
             break;
           case 'sh':
-            editor.setOption("mode", "shell");
+            mode = "shell";
             break;
           case 'py':
-            editor.setOption("mode", "python");
+            mode = "python";
             break;
-          default:
-            editor.setOption("mode", "txt");
-        }
+        };
+        editor.setOption('mode', mode);
+        // Configure mode-specific settings
+        if (mode === 'xml') {
+          // Set XML-specific hint options
+          editor.setOption('hintOptions', {
+            schemaInfo: xmlSchema,
+            completeSingle: false,
+            hint: customXmlHint
+          });
+          // Set XML-specific key bindings
+          editor.setOption('extraKeys', {
+            Tab: function(cm) { return cm.execCommand("indentMore"); },
+            "Shift-Tab": function(cm) { return cm.execCommand("indentLess"); },
+            "'<'": completeAfter,
+            "'/'": completeIfAfterLt,
+            "' '": completeIfInTag,
+            "'='": completeIfInTag,
+            "Ctrl-Space": "autocomplete"
+          });
+        } else {
+          // Clear XML-specific hint options for other modes
+          editor.setOption('hintOptions', {});
+          // Set default key bindings (without XML autocomplete triggers)
+          editor.setOption('extraKeys', {
+            Tab: function(cm) { return cm.execCommand("indentMore"); },
+            "Shift-Tab": function(cm) { return cm.execCommand("indentLess"); },
+            "Ctrl-Space": "autocomplete"  // Keep general autocomplete
+          });
+        };
         if(allowedtxt.indexOf(path.split('.').pop()) > -1) {
           editor.getDoc().setValue(data);
           editor.setOption('readOnly', false);
