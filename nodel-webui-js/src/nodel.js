@@ -939,7 +939,9 @@ var initEditor = function(){
       lineNumbers: true,
       matchBrackets: true,
       autoRefresh: true,
-      tabSize: 2
+      tabSize: 2,
+      foldGutter: true,
+      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
     });
     cmResize(editor, {resizableWidth: false});
     var counter = 0;
