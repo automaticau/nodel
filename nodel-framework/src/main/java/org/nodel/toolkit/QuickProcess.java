@@ -105,6 +105,11 @@ public class QuickProcess implements Closeable {
     /**
      * (arg instance)
      */
+    private String _priority;
+
+    /**
+     * (arg instance)
+     */
     private boolean _mergeErr;
 
     /**
@@ -139,7 +144,7 @@ public class QuickProcess implements Closeable {
      * Constructs a new quick process.
      */
     public QuickProcess(H0 threadStateHandler, ThreadPool threadPool, Timers timers, H1<Exception> callbackExceptionHandler,  BaseDynamicNode parentNode,
-            List<String> command, String stdinPush, H1<Integer> onStarted, H1<FinishedArg> onFinished, long timeout, String working, boolean mergeErr, Map<String, String> env) {
+            List<String> command, String stdinPush, H1<Integer> onStarted, H1<FinishedArg> onFinished, long timeout, String working, boolean mergeErr, Map<String, String> env, String priority) {
         
         // validate command list
         if (command == null || command.size() < 1 || Strings.isBlank(command.get(0)))
@@ -159,6 +164,7 @@ public class QuickProcess implements Closeable {
         _working = working;
         _mergeErr = mergeErr;
         _env = env;
+        _priority = priority;
     }
     
     /**
@@ -203,6 +209,10 @@ public class QuickProcess implements Closeable {
             list.add(processSandboxFile.getAbsolutePath());
             list.add("--ppid");
             list.add(String.valueOf(Nodel.getPID()));
+            if (!Strings.isBlank(_priority)) {
+                list.add("--priority");
+                list.add(_priority);
+            }
             list.addAll(origCommand);
 
             command = list;

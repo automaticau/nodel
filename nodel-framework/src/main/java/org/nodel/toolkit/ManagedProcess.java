@@ -228,6 +228,11 @@ public class ManagedProcess implements Closeable {
      * (see setter)
      */
     private Map<String, String> _env;    
+
+    /** 
+     * (see setter)
+     */
+    private String _priority;
     
     /**
      * The delimiters to split the receive data on.
@@ -482,7 +487,21 @@ public class ManagedProcess implements Closeable {
      */
     public Map<String, String> getEnv() {
         return _env;
-    }    
+    }
+
+    /** 
+     * Process priority, should at least support "Idle" suitable for any OS
+     */
+    public void setPriority(String value) {
+        _priority  = value;
+    }
+
+    /**
+     * (see setter)
+     */
+    public String getPriority() {
+        return _priority;
+    }
     
     /**
      * Performs necessary initialisation before either actually starting or stopping
@@ -643,6 +662,12 @@ public class ManagedProcess implements Closeable {
                 list.add(processSandboxFile.getAbsolutePath());
                 list.add("--ppid");
                 list.add(String.valueOf(Nodel.getPID()));
+
+                if (!Strings.isBlank(_priority)) {
+                    list.add("--priority");
+                    list.add(_priority);
+                }
+
                 list.addAll(origCommand);
 
                 command = list;

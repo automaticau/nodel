@@ -131,10 +131,11 @@ def Process(command, # the command line and arguments
            sendDelimiters='\n', receiveDelimiters='\r\n', # default delimiters
            working=None,   # working directory
            mergeErr=False, # merge  stderr into the stdout for convenience
-           env=None):      # add/set environment variables (dict)
+           env=None,       # add/set environment variables (dict)
+           priority=None): # e.g. Idle, Normal, High, etc. OS dependent
   return nodetoolkit.createProcess(command, 
                                 started, stdout, stdin, stderr, stopped, timeout, sendDelimiters, receiveDelimiters,
-                                working, mergeErr, env)
+                                working, mergeErr, env, priority)
 
 # Creates a short-living process (still managed)
 def quick_process(command,
@@ -147,7 +148,8 @@ def quick_process(command,
                   timeoutInSeconds=0, # if positive, kills the process on timeout
                   working=None,   # the working directory
                   mergeErr=False, # merge  stderr into the stdout for convenience
-                  env=None):      # add/set environment variables (dict)
+                  env=None,       # add/set environment variables (dict)
+                  priority=None): # e.g. Idle, Normal, High, etc. OS dependent
     return nodetoolkit.createQuickProcess(command, stdinPush, 
                                        started, finished, 
                                        long(timeoutInSeconds * 1000), working, mergeErr, env)

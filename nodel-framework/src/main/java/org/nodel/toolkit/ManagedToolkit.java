@@ -482,7 +482,8 @@ public class ManagedToolkit {
                                 String receiveDelimiters,
                                 String working,
                                 boolean mergestderr,
-                                Map<String, String> env) {
+                                Map<String, String> env,
+                                String priority) {
         ManagedProcess process = new ManagedProcess(_node, command, _threadStateHandler, _processExceptionHandler, _callbackQueue, s_threadPool, s_timers);
         
         // set up the callback handlers as provided by the user
@@ -499,6 +500,7 @@ public class ManagedToolkit {
         process.setWorking(working);
         process.setMergeError(mergestderr);
         process.setEnv(env);
+        process.setPriority(priority);
         
         synchronized(_lock) {
             if (_closed)
@@ -522,9 +524,10 @@ public class ManagedToolkit {
             long timeout,
             String working,
             boolean mergeErr,
-            Map<String, String> env) {
+            Map<String, String> env,
+            String priority) {
 
-        final QuickProcess quickProcess = new QuickProcess(_threadStateHandler, s_threadPool, s_timers, _processExceptionHandler, _node, command, stdinPush, onStarted, onFinished, timeout, working, mergeErr, env);
+        final QuickProcess quickProcess = new QuickProcess(_threadStateHandler, s_threadPool, s_timers, _processExceptionHandler, _node, command, stdinPush, onStarted, onFinished, timeout, working, mergeErr, env, priority);
         quickProcess.setClosedHandler(new Handler.H0() {
 
             @Override
