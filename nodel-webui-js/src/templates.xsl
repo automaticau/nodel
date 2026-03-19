@@ -960,9 +960,9 @@
   <!-- select -->
   <!-- dynamicselect -->
 <xsl:template match="dynamicselect">
-    <div class="btn-group btn-select">
+    <div>
       <xsl:attribute name="class">
-        <xsl:text>dynamicselect</xsl:text>
+        <xsl:text>btn-group btn-select</xsl:text>
         <xsl:if test="@showevent">
           <xsl:text> sect</xsl:text>
         </xsl:if>
