@@ -21,10 +21,8 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolException;
 import org.apache.http.StatusLine;
 import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -49,7 +47,6 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -408,7 +405,6 @@ public class ApacheNodelHttpClient extends NodelHTTPClient {
 
     /**
      * Applies security for a given HTTP request.
-     * @throws AuthenticationException 
      */
     private void applySecurity(HttpRequestBase httpRequest, String username, String password) {
         Credentials creds;
@@ -425,15 +421,8 @@ public class ApacheNodelHttpClient extends NodelHTTPClient {
             creds = new NTCredentials(userPart, password, getLocalHostName(), domainPart);
 
         } else {
-            // BasicAuth
+            // Standard credentials (supports Basic and Digest via challenge-response)
             creds = new UsernamePasswordCredentials(username, password);
-
-            // pre-emptive
-            try {
-                httpRequest.setHeader(new BasicScheme().authenticate(creds, httpRequest, null));
-            } catch (AuthenticationException e) {
-                throw new RuntimeException(e);
-            }
         }
 
         _credentialsProvider.setCredentials(new AuthScope(httpRequest.getURI().getHost(), httpRequest.getURI().getPort()), creds);
