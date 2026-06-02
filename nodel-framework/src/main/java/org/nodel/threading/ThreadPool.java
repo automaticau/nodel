@@ -206,7 +206,7 @@ public class ThreadPool {
                 }
                 
                 // create the new thread
-                Thread thread = new Thread(new Runnable() {
+                Thread thread = Threads.createPoolThread("Npoolthread", new Runnable() {
                     
                     @Override
                     public void run() {
@@ -215,12 +215,9 @@ public class ThreadPool {
                     
                 });
                 
-                int total = this.totalThreads.incrementAndGet();
+                this.totalThreads.incrementAndGet();
                 
                 this.threadsInUse.incrementAndGet();
-                
-                thread.setName("pool_" + this.name + "_" + (total - 1));
-                thread.setDaemon(true);
                 
                 synchronized(this.creationSignal) {
                     // kick off the new thread

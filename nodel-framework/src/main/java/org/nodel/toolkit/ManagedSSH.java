@@ -357,7 +357,7 @@ public class ManagedSSH implements Closeable {
         _timerThread = timers;
 
         // set up the connect and receive thread
-        _thread = new Thread(new Runnable() {
+        _thread = Threads.createLongThread("Nssh" + node.getName().getReducedName(), new Runnable() {
 
             @Override
             public void run() {
@@ -365,8 +365,6 @@ public class ManagedSSH implements Closeable {
             }
 
         });
-        _thread.setName(node.getName().getReducedName() + "_sshConnectAndReceive_" + _instance);
-        _thread.setDaemon(true);
 
         // register the counters
         String counterName = "'" + node.getName().getReducedName() + "'";

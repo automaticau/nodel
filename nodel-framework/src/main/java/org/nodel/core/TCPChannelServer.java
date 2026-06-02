@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.LinkedList;
 
+import org.nodel.Threads;
 import org.nodel.diagnostics.CountableInputStream;
 import org.nodel.diagnostics.CountableOutputStream;
 import org.nodel.diagnostics.Diagnostics;
@@ -93,7 +94,8 @@ public class TCPChannelServer extends ChannelServer {
         _socket = socket;
         
         // initialise the thread
-        _thread = new Thread(new Runnable() {
+
+        _thread = Threads.createLongThread("Ntcpchsrv", new Runnable() {
 
             @Override
             public void run() {
@@ -101,8 +103,6 @@ public class TCPChannelServer extends ChannelServer {
             }
 
         });
-        _thread.setName(String.format("channel_server_%d", this._instance));
-        _thread.setDaemon(true);
     } // (constructor)
 
     /**
@@ -121,7 +121,7 @@ public class TCPChannelServer extends ChannelServer {
                 throw new IllegalStateException("Already shutdown.");
             
             // kick of the message queue handler
-            Thread outgoingMessageQueueThread = new Thread(new Runnable() {
+            Thread outgoingMessageQueueThread = Threads.createLongThread("Ntcpchsrv_queue", new Runnable() {
                 
                 @Override
                 public void run() {
@@ -129,8 +129,6 @@ public class TCPChannelServer extends ChannelServer {
                 }
                 
             });
-            outgoingMessageQueueThread.setName(String.format("tcp_channel_server_queue_%d", this._instance));
-            outgoingMessageQueueThread.setDaemon(true);
             outgoingMessageQueueThread.start();
 
             try {

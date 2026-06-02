@@ -9,6 +9,9 @@ package org.nodel;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.nodel.diagnostics.Diagnostics;
+import org.nodel.diagnostics.SharableMeasurementProvider;
+
 /**
  * Holds thread-related general purpose or utility methods.
  */
@@ -232,10 +235,7 @@ public class Threads {
 
         @Override
         public void handle(Runnable runnable) {
-            Thread thread = new Thread(runnable);
-            thread.setName(String.format("nodeloneoff_%d", s_threadNumber.getAndIncrement()));
-            thread.setDaemon(true);
-            thread.start();
+            createShortThread(String.format("nodeloneoff_%d", s_threadNumber.getAndIncrement()), runnable).start();
         }
         
     };
@@ -319,5 +319,89 @@ public class Threads {
 
         return op;
     } // (method)
+
+
+    // THREAD INSTRUMENTATION
+    // ALL NEW THREADS ACROSS THE FRAMEWORK SHOULD BE CREATED THROUGH THE BELOW METHODS TO ENSURE PROPER INSTRUMENTATION.
+
+    private static final SharableMeasurementProvider s_counter_LongCreated = Diagnostics.shared().registerSharableCounter("N Threading.Long thread creations", true);
+
+    private static final SharableMeasurementProvider s_counter_LongAlive = Diagnostics.shared().registerSharableCounter("N Threading.Long threads alive", false);
+
+    /**
+     * Creates a long-living daemon thread with instrumentation, one expected to be alive for a long time, e.g. a thread handling a server socket. During stable operation, there should be a low number of these i.e. low churn.
+     */
+    public static Thread createLongThread(String name, Runnable runnable) {
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                s_counter_LongAlive.incr();
+                try {
+                    runnable.run();
+                } finally {
+                    s_counter_LongAlive.decr();
+                }
+            }
+
+        }, name);
+        thread.setDaemon(true);
+        s_counter_LongCreated.incr();
+        return thread;
+    }
+
+    private static final SharableMeasurementProvider s_counter_ShortCreated = Diagnostics.shared().registerSharableCounter("N Threading.Short thread creations", true);
+
+    private static final SharableMeasurementProvider s_counter_ShortAlive = Diagnostics.shared().registerSharableCounter("N Threading.Short threads alive", false);
+
+    /**
+     * Creates a short-living daemon thread with instrumentation, one expected to be alive for a short time, e.g. a thread handling a one-off task. During stable operation these could still be high in number, churn high.
+     */
+    public static Thread createShortThread(String name, Runnable runnable) {
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                s_counter_ShortAlive.incr();
+                try {
+                    runnable.run();
+                } finally {
+                    s_counter_ShortAlive.decr();
+                }
+            }
+
+        }, name);
+        thread.setDaemon(true);
+        s_counter_ShortCreated.incr();
+        return thread;
+    }
+
+
+    private static final SharableMeasurementProvider s_counter_PoolCreated = Diagnostics.shared().registerSharableCounter("N Threading.Pool thread creations", true);
+
+    private static final SharableMeasurementProvider s_counter_PoolAlive = Diagnostics.shared().registerSharableCounter("N Threading.Pool threads alive", false);
+
+    /**
+     * Creates a thread to be used in a thread-pool with instrumentation
+     */
+    public static Thread createPoolThread(String name, Runnable runnable) {
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                s_counter_PoolAlive.incr();
+                try {
+                    runnable.run();
+                } finally {
+                    s_counter_PoolAlive.decr();
+                }
+            }
+
+        }, name);
+        thread.setDaemon(true);
+        s_counter_PoolCreated.incr();
+        return thread;
+    }    
+
 
 } // (class)

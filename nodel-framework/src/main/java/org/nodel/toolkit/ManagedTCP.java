@@ -310,7 +310,7 @@ public class ManagedTCP implements Closeable {
         _timerThread = timers;
         
         // set up the connect and receive thread
-        _thread = new Thread(new Runnable() {
+        _thread = Threads.createLongThread("Ntcp" + node.getName().getReducedName(), new Runnable() {
 
             @Override
             public void run() {
@@ -318,8 +318,6 @@ public class ManagedTCP implements Closeable {
             }
             
         });
-        _thread.setName(node.getName().getReducedName() + "_tcpConnectAndReceive_" + _instance);
-        _thread.setDaemon(true);
         
         // register the counters
         String counterName = "'" + node.getName().getReducedName() + "'";

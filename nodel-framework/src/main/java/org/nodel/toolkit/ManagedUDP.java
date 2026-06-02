@@ -240,7 +240,7 @@ public class ManagedUDP implements Closeable {
         _timerThread = timers;
         
         // set up the connect and receive thread
-        _thread = new Thread(new Runnable() {
+        _thread = Threads.createLongThread("Nudp" + node.getName().getReducedName(), new Runnable() {
 
             @Override
             public void run() {
@@ -248,8 +248,6 @@ public class ManagedUDP implements Closeable {
             }
             
         });
-        _thread.setName(node.getName().getReducedName() + "_udpBindAndListen_" + _instance);
-        _thread.setDaemon(true);
         
         // register the counters
         String counterName = "'" + node.getName().getReducedName() + "'";
